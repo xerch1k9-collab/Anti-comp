@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>АНТИ-КОМПЫ</title>
+<style>
+:root{--bg:#0f0f12;--panel:rgba(255,255,255,.04);--acc:#ffaa00;--glow:#ffd74d;--txt:#e6e1d4;--dim:#8c877a;--brd:rgba(255,255,255,.1);--r:14px}
+*{margin:0;padding:0;box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--bg);color:var(--txt);font-family:system-ui,Segoe UI,Roboto,Arial,sans-serif;overflow-x:hidden}
+.container{max-width:1120px;margin:0 auto;padding:0 20px}
+header{position:sticky;top:0;z-index:100;background:rgba(15,15,18,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--brd);padding:12px 0}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.logo{font-size:1.3rem;font-weight:800;color:var(--glow);text-decoration:none;white-space:nowrap}
+.chips{display:flex;gap:10px}
+.chip{background:var(--panel);border:1px solid var(--brd);border-radius:50px;padding:5px 14px;font-size:.8rem;white-space:nowrap}
+.chip b{color:var(--glow)}
+.burger{display:none;background:none;border:1px solid var(--brd);border-radius:8px;color:var(--txt);font-size:1.4rem;padding:4px 14px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#menu{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#menu a{color:var(--txt);text-decoration:none;font-size:.9rem;padding:8px 14px;border-radius:8px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+#menu a:hover,#menu a.act{color:var(--glow);background:var(--panel)}
+.page{display:none;padding:50px 0;min-height:70vh}
+.page.act{display:block;animation:fade .5s}
+@keyframes fade{from{opacity:0;transform:translateY(16px)}to{opacity:1}}
+h1{font-size:clamp(2rem,6vw,3.6rem);color:#fff;text-shadow:0 0 18px rgba(255,170,0,.4)}
+h2{font-size:1.5rem;color:#fff;margin-bottom:10px}
+.sub{color:var(--dim);max-width:640px;margin:10px 0 30px;line-height:1.5}
+.btn{display:inline-block;padding:12px 28px;border:1px solid var(--glow);border-radius:var(--r);background:none;color:var(--glow);font-size:1rem;cursor:pointer;text-decoration:none;-webkit-tap-highlight-color:transparent}
+.btn:hover{background:var(--glow);color:#000}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.card,.sp{background:var(--panel);border:1px solid var(--brd);border-radius:var(--r);padding:22px;margin-bottom:16px}
+.sp{border-color:rgba(255,170,0,.5);box-shadow:0 0 24px rgba(255,170,0,.15);text-align:center}
+.sp .n{font-weight:800;color:#fff;font-size:1.3rem}
+.sp .k{color:var(--glow);font-size:.8rem;letter-spacing:.1em;text-transform:uppercase}
+.big{font-size:clamp(1.6rem,4vw,2.6rem);font-weight:800;color:var(--glow);animation:pulse 2.5s ease-in-out infinite}
+@keyframes pulse{50%{text-shadow:0 0 18px rgba(255,170,0,.8)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.ww{width:260px;max-width:80vw;cursor:pointer;user-select:none;position:relative;margin:0 auto}
+svg.win{width:100%;display:block}
+.pl,.pr{transform-origin:50px 50px;transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.open .pl{transform:rotateY(-55deg)}
+.open .pr{transform:rotateY(55deg)}
+.wl,.lf{opacity:0;transition:opacity .4s}
+.open .wl{opacity:1;animation:wind 1s infinite}
+.open .lf{opacity:1;animation:leaf 2.5s infinite}
+@keyframes wind{50%{transform:translateX(-10px)}}
+@keyframes leaf{to{transform:translate(-60px,-30px) rotate(-40deg);opacity:0}}
+.chart{background:var(--panel);border:1px solid var(--brd);border-radius:var(--r);padding:20px;margin-bottom:16px}
+.chart svg{width:100%;height:220px;display:block}
+.pR,.pG{fill:none;stroke-width:3;stroke-linecap:round}
+.pR{stroke:#ff3b3b}.pG{stroke:#3bff55}
+.cap{color:var(--dim);font-size:.7rem;letter-spacing:.15em;text-transform:uppercase;margin-top:8px}
+.live-badge{display:inline-flex;align-items:center;gap:6px;color:#3bff55;font-size:.75rem;letter-spacing:.15em;vertical-align:middle}
+.live-badge i{width:8px;height:8px;border-radius:50%;background:#3bff55;animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.2}}
+.bars{display:flex;align-items:flex-end;gap:10px;height:160px}
+.barw{flex:1;display:flex;align-items:flex-end;height:100%}
+.barw .bar{width:100%;border-radius:4px 4px 0 0;transform-origin:bottom;animation:grow 1s cubic-bezier(.2,.8,.2,1) both,breathe 2.2s ease-in-out infinite}
+@keyframes grow{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+@keyframes breathe{50%{filter:brightness(1.5)}}
+#live{width:100%;height:180px;display:block;touch-action:none}
+.tr{display:flex;align-items:center;gap:14px;background:var(--panel);border:1px solid var(--brd);border-radius:var(--r);padding:14px;cursor:pointer;margin-bottom:12px;flex-wrap:wrap;-webkit-tap-highlight-color:transparent}
+.tr:hover{border-color:var(--glow)}
+.tr .cov{width:52px;height:52px;border-radius:8px;flex-shrink:0}
+.tr .ti{color:#fff;font-weight:700}
+.tr .ar{color:var(--dim);font-size:.85rem}
+.tr iframe{display:none;width:100%;margin-top:10px;border:0}
+.tr.exp{flex-wrap:wrap}
+.tr.exp iframe{display:block}
+#cv{width:100%;max-width:800px;height:300px;background:#14141a;border:1px solid var(--brd);border-radius:var(--r);display:block;touch-action:none}
+.gover{display:none}
+.stat{display:flex;gap:20px;margin:10px 0;color:var(--dim);flex-wrap:wrap}
+.stat b{color:var(--glow);font-size:1.2rem}
+.rev{background:var(--panel);border:1px solid rgba(255,170,0,.5);box-shadow:0 0 20px rgba(255,170,0,.12);border-radius:var(--r);padding:22px;margin-bottom:16px}
+.rev .who{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.rev .name{color:#fff;font-weight:700}
+.vk{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:var(--glow);color:#000;font-size:13px;font-weight:800;flex-shrink:0}
+.stars{color:var(--glow);letter-spacing:3px;font-size:1.05rem}
+.marq{overflow:hidden;white-space:nowrap;border-top:1px solid var(--brd);border-bottom:1px solid var(--brd);padding:14px 0;color:var(--dim);letter-spacing:.1em;margin-top:40px}
+.marq span{display:inline-block;animation:mq 20s linear infinite}
+@keyframes mq{to{transform:translateX(-50%)}}
+footer{padding:30px 0;border-top:1px solid var(--brd);color:var(--dim);text-align:center;font-size:.85rem}
+a{color:var(--glow)}
+@media(max-width:768px){
+.hero{grid-template-columns:1fr}
+.burger{display:block}
+.chips{display:none}
+#menu{display:none;position:absolute;left:12px;right:12px;top:64px;background:#16161c;border:1px solid var(--brd);border-radius:12px;padding:10px;flex-direction:column;max-height:60vh;overflow-y:auto;z-index:200;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+#menu.show{display:flex}
+#menu a{display:block;padding:12px}
+.chart svg{height:160px}
+.bars{height:120px}
+#live{height:140px}
+}
+@media(min-width:769px){#menu{display:flex!important}}
+@media(orientation:landscape) and (max-height:500px){
+#menu.show{max-height:50vh}
+#menu a{padding:8px 12px}
+}
+</style>
+</head>
+<body>
+<header><div class="container">
+<div class="nav">
+<a class="logo" href="#" onclick="go('home');return false">АНТИ-КОМПЫ</a>
+<div class="chips"><span class="chip">Аура: <b id="auraV">0</b></span><span class="chip">Форточки: <b id="winV">743</b></span></div>
+<button class="burger" id="burger" aria-label="Меню">☰</button>
+</div>
+<nav id="menu"></nav>
+</div></header>
+
+<main class="container">
+
+<section id="home" class="page">
+<div class="hero">
+<div>
+<h1>МЫ ПРОТИВ КОМПОВ</h1>
+<p class="sub">Открываем форточки. Закрываем компы. Делаем мир живым. Даниил Бизнесмен пожертвовал движению 200 000 долларов.</p>
+<a class="btn" href="#" onclick="go('contacts');return false">Связаться с нами</a>
+</div>
+<div class="ww" onclick="toggleWin(this)">
+<svg class="win" viewBox="0 0 100 100">
+<rect x="8" y="8" width="84" height="84" stroke="rgba(255,255,255,.2)" rx="6" fill="none"/>
+<line class="wl" x1="20" y1="30" x2="2" y2="26" stroke="#ffd74d" stroke-width="1"/>
+<line class="wl" x1="18" y1="50" x2="0" y2="50" stroke="#ffd74d" stroke-width="1"/>
+<circle class="lf" cx="15" cy="40" r="2.5" fill="#ffaa00"/>
+<circle class="lf" cx="12" cy="60" r="2" fill="#ffaa00" style="animation-delay:.6s"/>
+<line x1="50" y1="8" x2="50" y2="92" stroke="rgba(255,255,255,.15)"/>
+<line x1="8" y1="50" x2="92" y2="50" stroke="rgba(255,255,255,.15)"/>
+<g class="pl"><rect x="10" y="10" width="38" height="80" stroke="#ffd74d" stroke-width="2" fill="rgba(0,0,0,.5)" rx="4"/></g>
+<g class="pr"><rect x="52" y="10" width="38" height="80" stroke="#ffd74d" stroke-width="2" fill="rgba(0,0,0,.5)" rx="4"/></g>
+</svg>
+</div>
+</div>
+<div class="marq"><span>ОТКРЫВАЕМ ФОРТОЧКИ — ЗАКРЫВАЕМ КОМПЫ — АУРА РАСТЁТ — ПИТБАЙК ЛУЧШЕ ПК — ОТКРЫВАЕМ ФОРТОЧКИ — ЗАКРЫВАЕМ КОМПЫ — АУРА РАСТЁТ — ПИТБАЙК ЛУЧШЕ ПК — </span></div>
+</section>
+
+<section id="principles" class="page"><h1>Принципы</h1><p class="sub">Три столпа движения.</p>
+<div class="card"><h2>1. Форточка важнее процессора</h2><p class="sub">Свежий воздух ускоряет сильнее любого оверклока. Открыл форточку — получил 100 ауры.</p></div>
+<div class="card"><h2>2. Питбайк вместо клавиатуры</h2><p class="sub">Настоящая скорость — на двух колёсах, а не в лаунчере.</p></div>
+<div class="card"><h2>3. Кейс-батл — спорт</h2><p class="sub">Заработано с открытия форточек и кейсов на кейс-батле: 47 350 долларов и растёт.</p></div>
+</section>
+
+<section id="movement" class="page"><h1>Форточное движение</h1><p class="sub">Наша статистика растёт сама и не сбрасывается.</p>
+<div class="grid">
+<div class="sp"><span class="big num" data-to="743" data-key="wins">0</span><p class="sub">открыто форточек</p></div>
+<div class="sp"><span class="big num" data-to="1200" data-key="boys">0</span><p class="sub">пацанов в движении</p></div>
+<div class="sp"><span class="big num" data-to="3450" data-key="pcs">0</span><p class="sub">закрытых компов</p></div>
+</div>
+<div class="ww" onclick="toggleWin(this)">
+<svg class="win" viewBox="0 0 100 100">
+<rect x="8" y="8" width="84" height="84" stroke="rgba(255,255,255,.2)" rx="6" fill="none"/>
+<line class="wl" x1="20" y1="35" x2="2" y2="30" stroke="#ffd74d" stroke-width="1"/>
+<circle class="lf" cx="14" cy="45" r="2.5" fill="#ffaa00"/>
+<g class="pl"><rect x="10" y="10" width="38" height="80" stroke="#ffd74d" stroke-width="2" fill="rgba(0,0,0,.5)" rx="4"/></g>
+<g class="pr"><rect x="52" y="10" width="38" height="80" stroke="#ffd74d" stroke-width="2" fill="rgba(0,0,0,.5)" rx="4"/></g>
+</svg>
+</div>
+</section>
+
+<section id="services" class="page"><h1>Услуги</h1><p class="sub">Что делает движение.</p>
+<div class="card"><h2>Открытие форточек</h2><p class="sub">Приходим и открываем. Бесплатно. От 3 форточек за выезд.</p></div>
+<div class="card"><h2>Прогулки на питбайке</h2><p class="sub">Гаражные пацаны катают по району. Шлем обязателен.</p></div>
+<div class="card"><h2>Газявка и хрумка</h2><p class="sub">Вечерние посиделки движения со снеками от спонсоров.</p></div>
+</section>
+
+<section id="rich" class="page"><h1>Мы богатые</h1><p class="sub">Капитал движения растёт вживую.</p>
+<div class="grid">
+<div class="sp"><span class="big num" data-to="200000" data-key="donate">0</span><p class="sub">пожертвовано инвестором, $</p></div>
+<div class="sp"><span class="big num" data-to="47350" data-key="earn">0</span><p class="sub">заработано с форточек и кейс-батла, $</p></div>
+<div class="sp"><span class="big num" data-to="9001" data-key="cool">0</span><p class="sub">индекс крутости</p></div>
+</div>
+<div class="card"><h2>Связь с инвестором</h2><p class="sub">Даниил Бизнесмен — Telegram: <a href="https://t.me/dan1Lka333larp" target="_blank" rel="noopener">@dan1Lka333larp</a></p></div>
+<div class="chart">
+<h2>Курс движения <span class="live-badge"><i></i>LIVE</span></h2>
+<svg viewBox="0 0 600 220" preserveAspectRatio="none">
+<path class="pR" id="pR" d="M10,30 C120,60 200,150 300,190"/>
+<path class="pG" id="pG" d="M300,190 C400,160 480,60 590,20"/>
+<circle id="dot" cx="590" cy="20" r="6" fill="#fff" opacity="0"/>
+<circle r="4.5" fill="#ff3b3b"><animateMotion dur="3.2s" repeatCount="indefinite"><mpath href="#pR"/></animateMotion></circle>
+<circle r="4.5" fill="#3bff55"><animateMotion dur="3.2s" begin="1.6s" repeatCount="indefinite"><mpath href="#pG"/></animateMotion></circle>
+</svg>
+<div class="cap">красная вниз — зелёная вверх</div>
+</div>
+<div class="chart">
+<h2>Капитал по кварталам</h2>
+<div class="bars">
+<div class="barw"><div class="bar" style="background:#ffaa00;height:10%;animation-delay:.1s,1.4s"></div></div>
+<div class="barw"><div class="bar" style="background:#ffaa00;height:30%;animation-delay:.3s,1.5s"></div></div>
+<div class="barw"><div class="bar" style="background:#ffd74d;height:55%;animation-delay:.5s,1.6s"></div></div>
+<div class="barw"><div class="bar" style="background:#ffd74d;height:80%;animation-delay:.7s,1.7s"></div></div>
+<div class="barw"><div class="bar" style="background:#fff;height:100%;animation-delay:.9s,1.8s"></div></div>
+</div>
+<div class="cap">столбики вырастают волной и дышат светом</div>
+</div>
+<div class="chart">
+<h2>Живой поток капитала <span class="live-badge"><i></i>LIVE</span></h2>
+<canvas id="live"></canvas>
+<div class="cap">линия обновляется сама, зелёный — вверх, красный — вниз</div>
+</div>
+</section>
+
+<section id="team" class="page"><h1>Создатели</h1><p class="sub">Люди движения.</p>
+<div class="grid">
+<div class="card"><h2>Егор CEO</h2><p class="sub">Основатель движения. Открывает форточки стратегически.</p></div>
+<div class="card"><h2>Альберт</h2><p class="sub">Личная линия: <a href="tel:+79198921822">+7 919 892 18 22</a></p></div>
+<div class="card"><h2>Даниил Бизнесмен</h2><p class="sub">Инвестор, 200 000 $. Telegram: <a href="https://t.me/dan1Lka333larp" target="_blank" rel="noopener">@dan1Lka333larp</a></p></div>
+</div>
+</section>
+
+<section id="sponsors" class="page"><h1>Спонсоры</h1><p class="sub">Тех, кто держит движение, — держим в золоте.</p>
+<div class="grid">
+<div class="sp"><div class="k">Спонсор №1</div><div class="n">CASE BATTLE</div></div>
+<div class="sp"><div class="k">Спонсор №2</div><div class="n">ISRAEL</div></div>
+</div>
+</section>
+
+<section id="respect" class="page"><h1>Нас уважают</h1><p class="sub">Отзывы людей, которые проверили движение на себе.</p>
+<div class="rev"><div class="who"><span class="name">Арсен Маркарян</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">Ставлю 5 звёзд. Никогда не знал, что анти-компы — это круто.</p></div>
+<div class="rev"><div class="who"><span class="name">Стив Джобс</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">Ставлю 5 звёзд. Раньше работали с Даниилом, а теперь он главный спонсор.</p></div>
+<div class="rev"><div class="who"><span class="name">Klimkeef</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">Ставлю 5 звёзд. Пацанская тема.</p></div>
+<div class="rev"><div class="who"><span class="name">Yak1ch</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">Ставлю 5 звёзд за такой хороший состав.</p></div>
+<div class="rev"><div class="who"><span class="name">Иван Золо</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">хороший сайт золикам советую 5 звезд</p></div>
+<div class="rev"><div class="who"><span class="name">Альберт Эпштейн</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">видел создателей в яйцо советую 5 звезд</p></div>
+<div class="rev"><div class="who"><span class="name">Макс Степанов</span><span class="vk">✓</span></div><div class="stars">★★★★★</div><p class="sub">кайф</p></div>
+</section>
+
+<section id="songs" class="page"><h1>Песни</h1><p class="sub">Что слушает движение. Нажми на трек — плеер раскроется и заиграет.</p>
+<div class="tr" data-src="https://music.yandex.ru/iframe/#track/133179861/34105446"><div class="cov" style="background:linear-gradient(135deg,#ffaa00,#7a3c00)"></div><div><div class="ti">ПАПА</div><div class="ar">тёмный принц, tewiq, FORTUNA 812</div></div></div>
+<div class="tr" data-src="https://music.yandex.ru/iframe/#track/142977716/38243921"><div class="cov" style="background:linear-gradient(135deg,#ffd74d,#5a3a00)"></div><div><div class="ti">Стюардесса</div><div class="ar">Back Prooff</div></div></div>
+<div class="tr" data-src="https://music.yandex.ru/iframe/#track/89446258/17547273"><div class="cov" style="background:linear-gradient(135deg,#ffcf7a,#3a2a00)"></div><div><div class="ti">Standoff 2.0</div><div class="ar">Веля</div></div></div>
+</section>
+
+<section id="games" class="page"><h1>Мини-игры</h1><p class="sub">Питбайк против полиции. Прыжок — пробел, клик или тап. Каждая перепрыгнутая машина — +50 очков.</p>
+<div class="stat"><span>Очки: <b id="score">0</b></span><span>Рекорд: <b id="best">0</b></span></div>
+<canvas id="cv" width="800" height="300"></canvas>
+<div class="card gover" id="gover"><h2>Попался, пацан!</h2><p class="sub">Очки: <b id="fin">0</b>. Рекорд: <b id="finBest">0</b>.</p><button class="btn" onclick="startGame()">Ещё раз</button></div>
+<button class="btn" id="gstart" onclick="startGame()">Старт</button>
+</section>
+
+<section id="support" class="page"><h1>Поддержка</h1><p class="sub">Работаем круглосуточно.</p>
+<div class="card"><h2>Горячая линия движения</h2><p class="sub"><a href="tel:+79198837589">+7 919 883 75 89</a></p></div>
+<div class="card"><h2>Личная линия Альберта</h2><p class="sub"><a href="tel:+79198921822">+7 919 892 18 22</a></p></div>
+<div class="card"><h2>Инвестор Даниил</h2><p class="sub">Telegram: <a href="https://t.me/dan1Lka333larp" target="_blank" rel="noopener">@dan1Lka333larp</a> — по вопросам крупных вложений и спонсорства.</p></div>
+<div class="card"><h2>Связь в MAX</h2><p class="sub"><a href="https://max.ru/join/OuyNAh2ut311bQKj3OtmaUsyc71rhe208e3xDwj33Yw" target="_blank" rel="noopener">Присоединиться в MAX</a> — мы там официально.</p></div>
+<div class="card"><h2>Частые вопросы</h2><p class="sub">Форточка не открывается? Кликни по ней ещё раз. Аура не зачислилась? Обнови страницу. Как стать спонсором? Напиши Даниилу в Telegram.</p></div>
+</section>
+
+<section id="contacts" class="page"><h1>Контакты</h1>
+<div class="card"><h2>Телефон</h2><p class="sub"><a href="tel:+79198837589">+7 919 883 75 89</a></p></div>
+<div class="card"><h2>Адрес штаба</h2><p class="sub">Литл-Сент-Джеймс</p></div>
+<div class="card"><h2>Связь в MAX</h2><p class="sub"><a href="https://max.ru/join/OuyNAh2ut311bQKj3OtmaUsyc71rhe208e3xDwj33Yw" target="_blank" rel="noopener">Присоединиться в MAX</a></p></div>
+<div class="card"><h2>Инвестор</h2><p class="sub">Telegram: <a href="https://t.me/dan1Lka333larp" target="_blank" rel="noopener">@dan1Lka333larp</a></p></div>
+</section>
+
+</main>
+<footer>АНТИ-КОМПЫ — движение живых. Компам — нет, форточкам — да.</footer>
+
+<script>
+var pages=["home","principles","movement","services","rich","team","sponsors","respect","songs","games","support","contacts"];
+var names=["Главная","Принципы","Движение","Услуги","Мы богатые","Создатели","Спонсоры","Нас уважают","Песни","Мини-игры","Поддержка","Контакты"];
+var m=document.getElementById("menu"),header=document.querySelector("header");
+pages.forEach(function(p,i){var a=document.createElement("a");a.textContent=names[i];a.id="m_"+p;a.onclick=function(){go(p);m.classList.remove("show")};m.appendChild(a)});
+var burger=document.getElementById("burger");
+burger.addEventListener("click",function(e){e.preventDefault();e.stopPropagation();m.classList.toggle("show")});
+document.addEventListener("click",function(e){if(!header.contains(e.target))m.classList.remove("show")});
+var cur="home";
+function go(p){cur=p;pages.forEach(function(x){document.getElementById(x).classList.toggle("act",x===p);var mi=document.getElementById("m_"+x);if(mi)mi.classList.toggle("act",x===p)});window.scrollTo(0,0);
+try{history.replaceState(null,"","#"+p)}catch(e){}
+if(p==="rich"){runChart();sizeLive()}
+if(p==="games")startGame()}
+/* Живые счётчики: старт + рост + сохранение между заходами */
+var counters={
+wins:{v:0,start:743,rate:1/5,fmt:"int"},
+boys:{v:0,start:1200,rate:1/15,fmt:"int"},
+pcs:{v:0,start:3450,rate:1/10,fmt:"int"},
+cool:{v:0,start:9001,rate:1/4,fmt:"int"},
+donate:{v:0,start:200000,rate:20,fmt:"money"},
+earn:{v:0,start:47350,rate:15,fmt:"money"}
+};
+function loadC(k){var t=+(localStorage.getItem("c_"+k+"_t")||0);var s=counters[k].start;
+if(!t){counters[k].v=s;localStorage.setItem("c_"+k+"_t",Date.now())}
+else{counters[k].v=Math.floor(s+(Date.now()-t)/1000*counters[k].rate)}}
+function fmtC(k,v){var n=Math.floor(v);return counters[k].fmt==="money"?n.toLocaleString("ru-RU")+" $":n.toLocaleString("ru-RU")}
+function updC(){pages.forEach(function(p){});document.querySelectorAll(".num").forEach(function(el){var k=el.dataset.key;if(k&&counters[k])el.textContent=fmtC(k,counters[k].v)})}
+Object.keys(counters).forEach(loadC);
+function runNum(el){var k=el.dataset.key,to=counters[k].v,t0=null;function st(ts){if(!t0)t0=ts;var p=Math.min((ts-t0)/1200,1);el.textContent=fmtC(k,to*(1-Math.pow(1-p,3)));if(p<1)requestAnimationFrame(st)}t0=null;requestAnimationFrame(st)}
+document.querySelectorAll(".num").forEach(runNum);
+setInterval(function(){var dt=(Date.now()-0);Object.keys(counters).forEach(function(k){counters[k].v=counters[k].start+(Date.now()-+(localStorage.getItem("c_"+k+"_t")||Date.now()))/1000*counters[k].rate});updC()},1000);
+function runChart(){var e=document.getElementById("pR");if(!e)return;var L=e.getTotalLength();e.style.strokeDasharray=L;e.style.strokeDashoffset=L;e.getBoundingClientRect();e.style.transition="stroke-dashoffset 1.6s ease";e.style.strokeDashoffset=0;var d=document.getElementById("dot");d.style.transition="opacity .4s";d.style.opacity=1}
+/* Форточка */
+var aura=+(localStorage.getItem("aura")||0),winsC=+(localStorage.getItem("wins")||743);
+function updChips(){document.getElementById("auraV").textContent=aura.toLocaleString("ru-RU");document.getElementById("winV").textContent=winsC.toLocaleString("ru-RU")}
+updChips();
+function toggleWin(w){var o=w.classList.toggle("open");if(o){winsC++;aura+=100;localStorage.setItem("wins",winsC);localStorage.setItem("aura",aura);updChips();setTimeout(function(){w.classList.remove("open")},2600)}}
+setInterval(function(){if(cur==="games")return;document.querySelectorAll(".page.act .ww").forEach(function(w){w.classList.add("open");setTimeout(function(){w.classList.remove("open")},2600)})},9000);
+/* Живой поток капитала */
+var lc=document.getElementById("live"),lx=lc.getContext("2d"),lpts=[],lw=0,lh=180,dpr=1,lv=50;
+function sizeLive(){var r=lc.getBoundingClientRect();if(!r.width)return;dpr=window.devicePixelRatio||1;lw=r.width;lc.width=Math.round(lw*dpr);lc.height=Math.round(lh*dpr);drawLive()}
+window.addEventListener("resize",sizeLive);
+function drawLive(){if(!lw||!lpts.length)return;lx.setTransform(dpr,0,0,dpr,0,0);lx.clearRect(0,0,lw,lh);var step=Math.max(6,lw/60);lx.lineWidth=2.5;lx.lineCap="round";
+for(var i=1;i<lpts.length;i++){var x1=(i-1)*step,y1=lh-10-(lpts[i-1]/100)*(lh-20),x2=i*step,y2=lh-10-(lpts[i]/100)*(lh-20);lx.strokeStyle=y2<y1?"#3bff55":"#ff3b3b";lx.beginPath();lx.moveTo(x1,y1);lx.lineTo(x2,y2);lx.stroke()}
+var n=lpts.length,x=(n-1)*step,y=lh-10-(lpts[n-1]/100)*(lh-20);lx.fillStyle="#ffd74d";lx.shadowColor="#ffd74d";lx.shadowBlur=12;lx.beginPath();lx.arc(x,y,4,0,7);lx.fill();lx.shadowBlur=0}
+for(var si=0;si<60;si++){lv=Math.max(10,Math.min(95,lv+(Math.random()*10-5)));lpts.push(lv)}
+setInterval(function(){if(cur!=="rich")return;lv=Math.max(10,Math.min(95,lv+(Math.random()*14-7)));lpts.push(lv);if(lpts.length>Math.ceil(lw/Math.max(6,lw/60)))lpts.shift();drawLive()},900);
+/* Треки */
+document.querySelectorAll(".tr").forEach(function(t){
+t.addEventListener("click",function(){
+document.querySelectorAll(".tr").forEach(function(o){if(o!==t){o.classList.remove("exp");var f=o.querySelector("iframe");if(f)f.remove()}});
+t.classList.toggle("exp");
+if(t.classList.contains("exp")&&!t.querySelector("iframe")){var ifr=document.createElement("iframe");ifr.src=t.dataset.src;ifr.height="200";ifr.frameBorder="0";t.appendChild(ifr)}})});
+/* Игра */
+var cv=document.getElementById("cv"),cx=cv.getContext("2d"),run=false,score=0,best=+(localStorage.getItem("best")||0),py=0,vy=0,obs=[],t=0,speed=5;
+document.getElementById("best").textContent=best;
+function startGame(){run=true;score=0;py=0;vy=0;obs=[];t=0;speed=5;document.getElementById("gover").style.display="none";document.getElementById("gstart").style.display="none";document.getElementById("score").textContent=0;requestAnimationFrame(loop)}
+function jump(){if(run&&py===0)vy=-13}
+cv.addEventListener("pointerdown",function(e){e.preventDefault();jump()});
+document.addEventListener("keydown",function(e){if(e.code==="Space"&&cur==="games"){e.preventDefault();jump()}});
+function loop(){if(!run)return;t++;speed=5+t/600;if(t%Math.max(45,Math.floor(90-t/40))===0)obs.push({x:cv.width+40,h:34+Math.random()*10});
+cx.clearRect(0,0,cv.width,cv.height);cx.strokeStyle="#ffaa00";cx.beginPath();cx.moveTo(0,260);cx.lineTo(cv.width,260);cx.stroke();
+vy+=0.6;py+=vy;if(py>0){py=0;vy=0}
+cx.save();cx.translate(90,238+py);cx.strokeStyle="#ffd74d";cx.lineWidth=3;cx.beginPath();cx.arc(-16,0,14,0,7);cx.stroke();cx.beginPath();cx.arc(20,0,11,0,7);cx.stroke();cx.beginPath();cx.moveTo(-16,0);cx.lineTo(-4,-22);cx.lineTo(12,-24);cx.lineTo(20,0);cx.moveTo(-4,-22);cx.lineTo(6,-22);cx.stroke();cx.restore();
+obs.forEach(function(o){o.x-=speed;cx.fillStyle="#1a2a5a";cx.fillRect(o.x,260-o.h,44,o.h);cx.fillStyle=(Math.floor(t/10)%2)?"#ff3b3b":"#3b6bff";cx.fillRect(o.x+8,258-o.h-6,10,5);cx.fillRect(o.x+26,258-o.h-6,10,5);if(o.x+44<90&&!o.p){o.p=1;score+=50;document.getElementById("score").textContent=score}});
+obs=obs.filter(function(o){return o.x>-60});
+var bx=64,by=224+py,bw=60,bh=30;obs.forEach(function(o){if(bx<o.x+44&&bx+bw>o.x&&by+bh>260-o.h){run=false;if(score>best){best=score;localStorage.setItem("best",best)}document.getElementById("best").textContent=best;document.getElementById("fin").textContent=score;document.getElementById("finBest").textContent=best;document.getElementById("gover").style.display="block"}});
+if(run)requestAnimationFrame(loop)}
+window.addEventListener("hashchange",function(){var p=location.hash.slice(1);if(pages.indexOf(p)>-1&&p!==cur)go(p)});
+var h=location.hash.slice(1);go(pages.indexOf(h)>-1?h:"home");
+sizeLive();
+</script>
+</body>
+</html>
